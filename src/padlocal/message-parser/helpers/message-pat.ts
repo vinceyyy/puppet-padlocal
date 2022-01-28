@@ -36,6 +36,7 @@ export async function isPatMessage (message: Message.AsObject) {
   }
 
   const patXml: PatXmlSchema = await xmlToJson(xml)
+  if (!patXml) return false
   return patXml.sysmsg.$.type === 'pat'
 }
 
@@ -49,9 +50,9 @@ export async function patMessageParser (message: Message.AsObject): Promise<PatM
 
   return {
     chatroom,
-    chatusername: patXml.sysmsg.pat.chatusername,
-    fromusername: patXml.sysmsg.pat.fromusername,
-    pattedusername: patXml.sysmsg.pat.pattedusername,
-    template: patXml.sysmsg.pat.template,
+    chatusername: patXml?.sysmsg.pat.chatusername,
+    fromusername: patXml?.sysmsg.pat.fromusername,
+    pattedusername: patXml?.sysmsg.pat.pattedusername,
+    template: patXml?.sysmsg.pat.template,
   }
 }
