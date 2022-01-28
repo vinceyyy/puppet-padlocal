@@ -1,29 +1,29 @@
-import { Message } from "padlocal-client-ts/dist/proto/padlocal_pb";
-import { MessageCategory, ParsedMessage, ParsedMessagePayloadSpec } from "./message-parser-type";
-import { Puppet, log } from "wechaty-puppet";
+import { Message } from 'padlocal-client-ts/dist/proto/padlocal_pb'
+import { MessageCategory, ParsedMessage, ParsedMessagePayloadSpec } from './message-parser-type'
+import { Puppet, log } from 'wechaty-puppet'
 
-const PRE = "[MessageParser]";
+const PRE = '[MessageParser]'
 
 export type MessageParserRetType = ParsedMessagePayloadSpec[keyof ParsedMessagePayloadSpec] | null;
 export type MessageParser = (puppet: Puppet, message: Message.AsObject) => Promise<MessageParserRetType>;
 
-const MessageParsers: Map<MessageCategory, MessageParser> = new Map();
-export function registerMessageParser(category: MessageCategory, parser: MessageParser): void {
-  MessageParsers.set(category, parser);
+const MessageParsers: Map<MessageCategory, MessageParser> = new Map()
+export function registerMessageParser (category: MessageCategory, parser: MessageParser): void {
+  MessageParsers.set(category, parser)
 }
 
-export async function parseMessage(puppet: Puppet, message: Message.AsObject): Promise<ParsedMessage<any>> {
+export async function parseMessage (puppet: Puppet, message: Message.AsObject): Promise<ParsedMessage<any>> {
   for (const [category, parser] of MessageParsers.entries()) {
     try {
-      const parsedPayload = await parser(puppet, message);
+      const parsedPayload = await parser(puppet, message)
       if (parsedPayload) {
         return {
           category,
           payload: parsedPayload,
-        };
+        }
       }
     } catch (e) {
-      log.error(PRE, `parse message error: ${e.stack}`);
+      log.error(PRE, `parse message error: ${(e as Error).stack}`)
     }
   }
 
@@ -31,5 +31,5 @@ export async function parseMessage(puppet: Puppet, message: Message.AsObject): P
   return {
     category: MessageCategory.NormalMessage,
     payload: message,
-  };
+  }
 }
